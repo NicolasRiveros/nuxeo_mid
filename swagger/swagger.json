@@ -394,21 +394,16 @@
                 "operationId": "WorkflowController.Create",
                 "parameters": [
                     {
-                        "in": "body",
-                        "name": "body",
-                        "description": "body for Workflow content",
+                        "in": "query",
+                        "name": "docID",
+                        "description": "ID del documento",
                         "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.Workflow"
-                        }
+                        "type": "string"
                     }
                 ],
                 "responses": {
-                    "201": {
-                        "description": "",
-                        "schema": {
-                            "$ref": "#/definitions/models.Workflow"
-                        }
+                    "200": {
+                        "description": "{}"
                     },
                     "403": {
                         "description": "body is empty"
@@ -417,33 +412,6 @@
             }
         },
         "/workflow/{id}": {
-            "get": {
-                "tags": [
-                    "workflow"
-                ],
-                "description": "get Workflow by id",
-                "operationId": "WorkflowController.GetOne",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "id",
-                        "description": "The key for staticblock",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "schema": {
-                            "$ref": "#/definitions/models.Workflow"
-                        }
-                    },
-                    "403": {
-                        "description": ":id is empty"
-                    }
-                }
-            },
             "put": {
                 "tags": [
                     "workflow"
@@ -477,30 +445,6 @@
                     },
                     "403": {
                         "description": ":id is not int"
-                    }
-                }
-            },
-            "delete": {
-                "tags": [
-                    "workflow"
-                ],
-                "description": "delete the Workflow",
-                "operationId": "WorkflowController.Delete",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "id",
-                        "description": "The id you want to delete",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{string} delete success!"
-                    },
-                    "403": {
-                        "description": "id is empty"
                     }
                 }
             }
