@@ -31,7 +31,7 @@ func (c *WorkflowController) Post() {
 	DocumentID := c.GetString("docID")
 	alertErr.Type = "OK"
 	alertErr.Code = "200"
-	alertErr.Body = DocumentID
+	alertErr.Body = DocumentID + beego.AppConfig.String("user") + beego.AppConfig.String("password")
 	c.Data["json"] = alertErr
 	c.ServeJSON()
 }
