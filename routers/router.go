@@ -25,6 +25,11 @@ func init() {
 				&controllers.UserController{},
 			),
 		),
+		beego.NSNamespace("/workflow",
+			beego.NSInclude(
+				&controllers.WorkflowController{},
+			),
+		),
 	)
 	beego.AddNamespace(ns)
 }
