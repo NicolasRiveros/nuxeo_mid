@@ -1,7 +1,10 @@
 package controllers
 
 import (
+	"encoding/json"
 	"fmt"
+
+	"github.com/astaxie/beego/logs"
 
 	"github.com/astaxie/beego"
 	"github.com/udistrital/nuxeo_mid/models"
@@ -35,61 +38,28 @@ func (c *WorkflowController) Post() {
 	fmt.Println(DocumentID)
 	alertErr.Type = "OK"
 	alertErr.Code = "200"
-	// models.BasicAuth()
-	// request.SetHeader()
-	// request.SetHeader("Authorization", "Basic "+models.BasicAuth("username1", "password123"))
-	// errGET := request.GetJson("https://"+beego.AppConfig.String("NovedadesApiMongoService")+"novedad", &resultadoGet)
-	// fmt.Println(errGET)
-	// req, err := http.NewRequest("GET", "https://"+beego.AppConfig.String("urlNuxeo")+"me", nil)
-	// // req.Header.Add("Authorization", "Basic "+models.BasicAuth())
-	// // http.SetBasicAuth()
-	// req.SetBasicAuth(beego.AppConfig.String("user"), beego.AppConfig.String("password"))
-	// // fmt.Println(err)
-	// logs.Error(err)
-	// logs.Info(req)
-	// client := &http.Client{}
-	// resp, err := client.Do(req)
-	// logs.Info(resp)
-	// logs.Error(err)
-	alertErr.Body = models.GetNuxeo("me")
+	alertErr.Body = DisparoFlujo(DocumentID)
+	// alertErr.Body = models.GetNuxeo("me")
 	c.Data["json"] = alertErr
 	c.ServeJSON()
 }
 
-// func peticion() interface{} {
-// 	url := "https://" + beego.AppConfig.String("urlNuxeo") + "me"
-
-// 	var client http.Client
-
-// 	req, err := http.NewRequest("GET", url, nil)
-// 	req.Header.Add("Authorization", "Basic "+basicAuth(beego.AppConfig.String("user"), beego.AppConfig.String("password")))
-// 	if err != nil {
-// 	}
-// 	resp, err3 := client.Do(req)
-
-// 	if err3 != nil {
-// 	}
-
-// 	defer resp.Body.Close()
-
-// 	if resp.StatusCode == 200 { // OK
-// 		bodyBytes, err2 := ioutil.ReadAll(resp.Body)
-// 		if err2 != nil {
-// 			logs.Error("fallo el leer el body de la peticion")
-// 		}
-// 		bodyString := string(bodyBytes)
-// 		var data interface{}
-// 		json.Unmarshal([]byte(bodyString), &data)
-// 		return data
-// 	}
-// 	return nil
-
-// }
-
-// func basicAuth(username, password string) string {
-// 	auth := username + ":" + password
-// 	return base64.StdEncoding.EncodeToString([]byte(auth))
-// }
+// @Title DisparoFlujo
+// @Description funcion para dispars flujo
+func DisparoFlujo(docID string) interface{} {
+	var respuesta interface{}
+	requestBody, errBody := json.Marshal(map[string]string{
+		"entity-type":         "workflow",
+		"workflowModelName":   "SerialDocumentReview",
+		"attachedDocumentIds": "[" + docID + "]",
+	})
+	// fmt.Println(requestBody)
+	if errBody != nil {
+		logs.Error("fallo el objeto a enviar: ", errBody)
+	}
+	respuesta = models.PostNuxeo("id", docID, requestBody, "@workflow")
+	return respuesta
+}
 
 // GetAll ...
 // @Title GetAll
