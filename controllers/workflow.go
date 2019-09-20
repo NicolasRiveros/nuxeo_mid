@@ -1,11 +1,7 @@
 package controllers
 
 import (
-	"encoding/base64"
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"net/http"
 
 	"github.com/astaxie/beego"
 	"github.com/udistrital/nuxeo_mid/models"
@@ -55,44 +51,45 @@ func (c *WorkflowController) Post() {
 	// resp, err := client.Do(req)
 	// logs.Info(resp)
 	// logs.Error(err)
-	alertErr.Body = peticion()
+	alertErr.Body = models.GetNuxeo("me")
 	c.Data["json"] = alertErr
 	c.ServeJSON()
 }
 
-func peticion() interface{} {
-	url := "https://" + beego.AppConfig.String("urlNuxeo") + "me"
+// func peticion() interface{} {
+// 	url := "https://" + beego.AppConfig.String("urlNuxeo") + "me"
 
-	var client http.Client
+// 	var client http.Client
 
-	req, err := http.NewRequest("GET", url, nil)
-	req.Header.Add("Authorization", "Basic "+basicAuth(beego.AppConfig.String("user"), beego.AppConfig.String("password")))
-	if err != nil {
-	}
-	resp, err3 := client.Do(req)
+// 	req, err := http.NewRequest("GET", url, nil)
+// 	req.Header.Add("Authorization", "Basic "+basicAuth(beego.AppConfig.String("user"), beego.AppConfig.String("password")))
+// 	if err != nil {
+// 	}
+// 	resp, err3 := client.Do(req)
 
-	if err3 != nil {
-	}
+// 	if err3 != nil {
+// 	}
 
-	defer resp.Body.Close()
+// 	defer resp.Body.Close()
 
-	if resp.StatusCode == 200 { // OK
-		bodyBytes, err2 := ioutil.ReadAll(resp.Body)
-		bodyString := string(bodyBytes)
-		var data interface{}
-		json.Unmarshal([]byte(bodyString), &data)
-		return data
-		if err2 != nil {
-		}
-	}
-	return nil
+// 	if resp.StatusCode == 200 { // OK
+// 		bodyBytes, err2 := ioutil.ReadAll(resp.Body)
+// 		if err2 != nil {
+// 			logs.Error("fallo el leer el body de la peticion")
+// 		}
+// 		bodyString := string(bodyBytes)
+// 		var data interface{}
+// 		json.Unmarshal([]byte(bodyString), &data)
+// 		return data
+// 	}
+// 	return nil
 
-}
+// }
 
-func basicAuth(username, password string) string {
-	auth := username + ":" + password
-	return base64.StdEncoding.EncodeToString([]byte(auth))
-}
+// func basicAuth(username, password string) string {
+// 	auth := username + ":" + password
+// 	return base64.StdEncoding.EncodeToString([]byte(auth))
+// }
 
 // GetAll ...
 // @Title GetAll
