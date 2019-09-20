@@ -51,20 +51,23 @@ func PostNuxeo(endpoint string, ID string, objeto []byte, opcionendpoint string)
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(objeto))
 	req.Header.Add("Authorization", "Basic "+BasicAuth(beego.AppConfig.String("user"), beego.AppConfig.String("password")))
 	if err != nil {
+		logs.Error("error en post de nuxeo: ", err)
 	}
 	resp, err3 := client.Do(req)
 
 	if err3 != nil {
+		logs.Info("error en client.Do", err3)
 	}
 
 	defer resp.Body.Close()
-
-	if resp.StatusCode == 200 { // OK
+	logs.Info(resp.StatusCode)
+	if resp.StatusCode == 200 || resp.StatusCode == 201 { // OK
 		bodyBytes, err2 := ioutil.ReadAll(resp.Body)
 		if err2 != nil {
 			logs.Error("fallo el leer el body de la peticion")
 		}
 		bodyString := string(bodyBytes)
+		logs.Info(bodyString)
 		var data interface{}
 		json.Unmarshal([]byte(bodyString), &data)
 		return data
