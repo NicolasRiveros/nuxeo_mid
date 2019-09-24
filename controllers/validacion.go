@@ -1,10 +1,7 @@
 package controllers
 
 import (
-	"reflect"
-
 	"github.com/astaxie/beego"
-	"github.com/astaxie/beego/logs"
 	"github.com/udistrital/nuxeo_mid/models"
 )
 
@@ -39,26 +36,22 @@ func (c *ValidacionController) Post() {
 	c.ServeJSON()
 }
 
-func ObtenerFlujoID(docID string) interface{} {
+func ObtenerFlujoID(docID string) string {
 	var respuesta interface{}
+	var StringRespueta string
 	respuesta = models.GetNuxeo("id", docID, "@workflow")
 	// result := respuesta["Body"]
-	logs.Error(respuesta)
+	// logs.Error(respuesta)
 	// logs.Error(reflect.ValueOf(respuesta))
 	respuesta = models.GetElemento(respuesta, "entries")
-	// respuesta = models.GetElemento(respuesta, "attachedDocumentIds")
-	logs.Emergency(respuesta)
+	StringRespueta = models.GetElementoMaptoString(respuesta, "id")
 
-	value := reflect.ValueOf(respuesta)
-	c := value.Index(0).Interface().(map[string]interface{})
-	logs.Info(c["attachedDocumentIds"])
-	logs.Info(c)
+	// value2 := reflect.ValueOf(c["attachedDocumentIds"])
+	// d := value2.Index(0).Interface().(map[string]interface{})
+	// logs.Info(d["id"])
 
-	value2 := reflect.ValueOf(c["attachedDocumentIds"])
-	d := value2.Index(0).Interface().(map[string]interface{})
-	logs.Info(d["id"])
-
-	return c["attachedDocumentIds"]
+	return StringRespueta
+	// return c["attachedDocumentIds"]
 }
 
 // GetAll ...
