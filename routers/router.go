@@ -20,6 +20,11 @@ func init() {
 				&controllers.WorkflowController{},
 			),
 		),
+		beego.NSNamespace("/validacion",
+			beego.NSInclude(
+				&controllers.ValidacionController{},
+			),
+		),
 	)
 	beego.AddNamespace(ns)
 }
