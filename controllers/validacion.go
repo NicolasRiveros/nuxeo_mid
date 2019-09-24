@@ -30,16 +30,53 @@ func (c *ValidacionController) Post() {
 	// fmt.Println(DocumentID)
 	alertErr.Type = "OK"
 	alertErr.Code = "200"
-	alertErr.Body = ObtenerFlujoID(DocumentID)
+	alertErr.Body = validar(DocumentID)
 	// alertErr.Body = models.GetNuxeo("me")
 	c.Data["json"] = alertErr
 	c.ServeJSON()
 }
 
+func validar(docID string) string {
+	flujoID := ObtenerFlujoID(docID)
+	tareaID := ObtenerTareaID(docID, flujoID, beego.AppConfig.String("user"), "SerialDocumentReview")
+	return tareaID
+}
+
 func ObtenerFlujoID(docID string) string {
 	var respuesta interface{}
 	var StringRespueta string
-	respuesta = models.GetNuxeo("id", docID, "@workflow")
+	endpoint := "id/" + docID + "/@workflow"
+	respuesta = models.GetNuxeo(endpoint)
+	// result := respuesta["Body"]
+	// logs.Error(respuesta)
+	// logs.Error(reflect.ValueOf(respuesta))
+	respuesta = models.GetElemento(respuesta, "entries")
+	StringRespueta = models.GetElementoMaptoString(respuesta, "id")
+
+	// value2 := reflect.ValueOf(c["attachedDocumentIds"])
+	// d := value2.Index(0).Interface().(map[string]interface{})
+	// logs.Info(d["id"])
+
+	return StringRespueta
+	// return c["attachedDocumentIds"]
+}
+
+func ObtenerTareaID(docID string, flujoID string, userID string, nameFlujo string) string {
+	var respuesta interface{}
+	var StringRespueta string
+	endpoint := "id/" + docID + "/@task?userId=" + userID + "&workflowInstanceId=" + flujoID + "&workflowModelName=" + nameFlujo
+	respuesta = models.GetNuxeo(endpoint)
+	respuesta = models.GetElemento(respuesta, "entries")
+	StringRespueta = models.GetElementoMaptoString(respuesta, "id")
+
+	return StringRespueta
+}
+
+func IniciarReview(docID string) string {
+	var respuesta interface{}
+	var StringRespueta string
+	endpoint := "id/" + docID + "/@workflow"
+	respuesta = models.GetNuxeo(endpoint)
 	// result := respuesta["Body"]
 	// logs.Error(respuesta)
 	// logs.Error(reflect.ValueOf(respuesta))

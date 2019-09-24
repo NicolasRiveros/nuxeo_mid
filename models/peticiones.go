@@ -10,11 +10,11 @@ import (
 	"github.com/astaxie/beego/logs"
 )
 
-func GetNuxeo(endpoint string, ID string, opcionendpoint string) interface{} {
+func GetNuxeo(endpoint string) interface{} {
 	url := "https://" + beego.AppConfig.String("urlNuxeo") + endpoint
-	if &opcionendpoint != nil {
-		url = url + "/" + ID + "/" + opcionendpoint
-	}
+	// if &opcionendpoint != nil {
+	// 	url = url + "/" + ID + "/" + opcionendpoint
+	// }
 
 	var client http.Client
 
