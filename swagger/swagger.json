@@ -98,33 +98,6 @@
             }
         },
         "/validacion/{id}": {
-            "get": {
-                "tags": [
-                    "validacion"
-                ],
-                "description": "get Validacion by id",
-                "operationId": "ValidacionController.GetOne",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "id",
-                        "description": "The key for staticblock",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "schema": {
-                            "$ref": "#/definitions/models.Validacion"
-                        }
-                    },
-                    "403": {
-                        "description": ":id is empty"
-                    }
-                }
-            },
             "put": {
                 "tags": [
                     "validacion"
@@ -295,12 +268,12 @@
     },
     "tags": [
         {
-            "name": "workflow",
-            "description": "WorkflowController operations for Workflow\n"
-        },
-        {
             "name": "validacion",
             "description": "ValidacionController operations for Validacion\n"
+        },
+        {
+            "name": "workflow",
+            "description": "WorkflowController operations for Workflow\n"
         }
     ]
 }

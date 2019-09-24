@@ -1,9 +1,11 @@
 package controllers
 
 import (
-	"fmt"
+	"reflect"
 
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/logs"
+	"github.com/udistrital/nuxeo_mid/models"
 )
 
 // ValidacionController operations for Validacion
@@ -14,7 +16,6 @@ type ValidacionController struct {
 // URLMapping ...
 func (c *ValidacionController) URLMapping() {
 	c.Mapping("Post", c.Post)
-	c.Mapping("GetOne", c.GetOne)
 	c.Mapping("GetAll", c.GetAll)
 	c.Mapping("Put", c.Put)
 }
@@ -27,19 +28,37 @@ func (c *ValidacionController) URLMapping() {
 // @Failure 403 body is empty
 // @router / [post]
 func (c *ValidacionController) Post() {
+	var alertErr models.Alert
 	DocumentID := c.GetString("docID")
-	fmt.Println(DocumentID)
+	// fmt.Println(DocumentID)
+	alertErr.Type = "OK"
+	alertErr.Code = "200"
+	alertErr.Body = ObtenerFlujoID(DocumentID)
+	// alertErr.Body = models.GetNuxeo("me")
+	c.Data["json"] = alertErr
+	c.ServeJSON()
 }
 
-// GetOne ...
-// @Title GetOne
-// @Description get Validacion by id
-// @Param	id		path 	string	true		"The key for staticblock"
-// @Success 200 {object} models.Validacion
-// @Failure 403 :id is empty
-// @router /:id [get]
-func (c *ValidacionController) GetOne() {
+func ObtenerFlujoID(docID string) interface{} {
+	var respuesta interface{}
+	respuesta = models.GetNuxeo("id", docID, "@workflow")
+	// result := respuesta["Body"]
+	logs.Error(respuesta)
+	// logs.Error(reflect.ValueOf(respuesta))
+	respuesta = models.GetElemento(respuesta, "entries")
+	// respuesta = models.GetElemento(respuesta, "attachedDocumentIds")
+	logs.Emergency(respuesta)
 
+	value := reflect.ValueOf(respuesta)
+	c := value.Index(0).Interface().(map[string]interface{})
+	logs.Info(c["attachedDocumentIds"])
+	logs.Info(c)
+
+	value2 := reflect.ValueOf(c["attachedDocumentIds"])
+	d := value2.Index(0).Interface().(map[string]interface{})
+	logs.Info(d["id"])
+
+	return c["attachedDocumentIds"]
 }
 
 // GetAll ...

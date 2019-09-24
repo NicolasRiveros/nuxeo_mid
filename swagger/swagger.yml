@@ -67,24 +67,6 @@ paths:
         "403":
           description: body is empty
   /validacion/{id}:
-    get:
-      tags:
-      - validacion
-      description: get Validacion by id
-      operationId: ValidacionController.GetOne
-      parameters:
-      - in: path
-        name: id
-        description: The key for staticblock
-        required: true
-        type: string
-      responses:
-        "200":
-          description: ""
-          schema:
-            $ref: '#/definitions/models.Validacion'
-        "403":
-          description: :id is empty
     put:
       tags:
       - validacion
@@ -197,9 +179,9 @@ definitions:
     title: Workflow
     type: object
 tags:
-- name: workflow
-  description: |
-    WorkflowController operations for Workflow
 - name: validacion
   description: |
     ValidacionController operations for Validacion
+- name: workflow
+  description: |
+    WorkflowController operations for Workflow

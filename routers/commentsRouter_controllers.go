@@ -27,15 +27,6 @@ func init() {
 
     beego.GlobalControllerRouter["github.com/udistrital/nuxeo_mid/controllers:ValidacionController"] = append(beego.GlobalControllerRouter["github.com/udistrital/nuxeo_mid/controllers:ValidacionController"],
         beego.ControllerComments{
-            Method: "GetOne",
-            Router: `/:id`,
-            AllowHTTPMethods: []string{"get"},
-            MethodParams: param.Make(),
-            Filters: nil,
-            Params: nil})
-
-    beego.GlobalControllerRouter["github.com/udistrital/nuxeo_mid/controllers:ValidacionController"] = append(beego.GlobalControllerRouter["github.com/udistrital/nuxeo_mid/controllers:ValidacionController"],
-        beego.ControllerComments{
             Method: "Put",
             Router: `/:id`,
             AllowHTTPMethods: []string{"put"},
