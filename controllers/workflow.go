@@ -81,6 +81,32 @@ func DisparoFlujo(docID string) interface{} {
 // @Failure 404 not found resource
 // @router /:id [delete]
 func (c *WorkflowController) Delete() {
+	var alertErr models.Alert
 	idStr := c.GetString("id")
 	fmt.Println(idStr)
+	DeleteFlujo := EliminarFlujo(idStr)
+	if DeleteFlujo != nil {
+		alertErr.Type = "OK"
+		alertErr.Code = "200"
+		alertErr.Body = DeleteFlujo
+	} else {
+		alertErr.Type = "Failure"
+		alertErr.Code = "404"
+		alertErr.Body = "Error al eliminar el documento el flujo"
+		c.Ctx.Output.SetStatus(404)
+	}
+	c.Data["json"] = alertErr
+	c.ServeJSON()
+}
+
+func EliminarFlujo(flujoID string) interface{} {
+	var respuesta interface{}
+	endpoint := "workflow/" + flujoID
+	respuesta = models.DeleteNuxeo(endpoint)
+	if respuesta != nil {
+		return respuesta
+	} else {
+		logs.Error("Error al obtener el ID del flujo")
+	}
+	return nil
 }
