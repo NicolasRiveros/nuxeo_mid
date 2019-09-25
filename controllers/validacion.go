@@ -49,7 +49,9 @@ func validar(docID string) interface{} {
 		tareaID := ObtenerTareaID(docID, flujoID, beego.AppConfig.String("user"), "SerialDocumentReview")
 		if tareaID != "nil" {
 			review := IniciarReview(tareaID)
-			return review
+			if review != "nil" {
+				return review
+			}
 		}
 
 	}
@@ -94,11 +96,13 @@ func IniciarReview(tareaID string) interface{} {
 		beego.AppConfig.String("user") + "\"],\n\"validationOrReview\":\"validation\"}\n}"
 	logs.Warn(string(requestBody))
 	respuesta = models.PutNuxeo(endpoint, requestBody)
-
-	// }
-	respuesta = models.GetElemento(respuesta, "id")
-	// StringRespueta = models.GetElementoMaptoString(respuesta, "id")
-	return respuesta
+	if respuesta != nil {
+		respuesta = models.GetElemento(respuesta, "id")
+		return respuesta
+	} else {
+		logs.Error("Error el review de la tarea")
+	}
+	return nil
 }
 
 // GetAll ...
