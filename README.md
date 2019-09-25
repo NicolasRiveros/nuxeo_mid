@@ -8,6 +8,36 @@ Inicialmente es un requerimiento para el cliente de `CUMPLIDOS` , peri se espera
 
 Los siguientes diagramas de secuencia evidencian el proceso de disparo de flujo y de aprovacion.
 
+
+# Instalación
+Para instalar el proyecto de debe relizar lo siguientes pasos:
+
+Ejecutar desde la terminal 'go get repositorio':
+```shell 
+go get github.com/udistrital/nuxeo_mid
+```
+
+# Ejecución del proyecto
+
+
+- Ejecutar: 
+```shell 
+bee run
+```
+- O si se quiere ejecutar el swager:
+
+```shell 
+bee run -downdoc=true -gendoc=true
+```
+
+### EndPoints
+|  Funcion |Tipo de peticion                  |Parametros| Endpoint |
+|----------------|------------------------|---------------------|-------------------|
+| **Disparar el flujo a un determinado documento** | **POST** |`DocID`   id del documento| ```workflow/[DocID]```|
+| **Eliminar un flujo de un documento** | **DELETE** | `DocID`   id del documento |```workflow/[DocID]```|
+| **Aprovar un documento** | **POST** | `DocID`   id del documento |```validacion/[DocID]```|
+
+
 ---
 
 ### Disparo de flujo
