@@ -1,7 +1,13 @@
 package controllers
 
 import (
+	"encoding/json"
+	"fmt"
+
+	"github.com/astaxie/beego/logs"
+
 	"github.com/astaxie/beego"
+	"github.com/udistrital/nuxeo_mid/models"
 )
 
 // WorkflowController operations for Workflow
@@ -12,60 +18,59 @@ type WorkflowController struct {
 // URLMapping ...
 func (c *WorkflowController) URLMapping() {
 	c.Mapping("Post", c.Post)
-	c.Mapping("GetOne", c.GetOne)
-	c.Mapping("GetAll", c.GetAll)
-	c.Mapping("Put", c.Put)
 	c.Mapping("Delete", c.Delete)
 }
 
 // Post ...
 // @Title Create
 // @Description create Workflow
-// @Param	body		body 	models.Workflow	true		"body for Workflow content"
-// @Success 201 {object} models.Workflow
-// @Failure 403 body is empty
+// @Param	docID	query	string	true		"ID del documento"
+// @Success 200 {}
+// @Failure 404 not found resource
 // @router / [post]
 func (c *WorkflowController) Post() {
+	var alertErr models.Alert
+	DocumentID := c.GetString("docID")
+	Disparo := DisparoFlujo(DocumentID)
 
+	if Disparo != nil {
+		alertErr.Type = "OK"
+		alertErr.Code = "200"
+		alertErr.Body = Disparo
+	} else {
+		alertErr.Type = "Failure"
+		alertErr.Code = "404"
+		alertErr.Body = "Error al disparar el flujo"
+		c.Ctx.Output.SetStatus(404)
+		// c.Data["json"] = alertErr
+		// c.ServeJSON()
+	}
+
+	// alertErr.Body = models.GetNuxeo("me")
+	c.Data["json"] = alertErr
+
+	c.ServeJSON()
 }
 
-// GetOne ...
-// @Title GetOne
-// @Description get Workflow by id
-// @Param	id		path 	string	true		"The key for staticblock"
-// @Success 200 {object} models.Workflow
-// @Failure 403 :id is empty
-// @router /:id [get]
-func (c *WorkflowController) GetOne() {
-
-}
-
-// GetAll ...
-// @Title GetAll
-// @Description get Workflow
-// @Param	query	query	string	false	"Filter. e.g. col1:v1,col2:v2 ..."
-// @Param	fields	query	string	false	"Fields returned. e.g. col1,col2 ..."
-// @Param	sortby	query	string	false	"Sorted-by fields. e.g. col1,col2 ..."
-// @Param	order	query	string	false	"Order corresponding to each sortby field, if single value, apply to all sortby fields. e.g. desc,asc ..."
-// @Param	limit	query	string	false	"Limit the size of result set. Must be an integer"
-// @Param	offset	query	string	false	"Start position of result set. Must be an integer"
-// @Success 200 {object} models.Workflow
-// @Failure 403
-// @router / [get]
-func (c *WorkflowController) GetAll() {
-
-}
-
-// Put ...
-// @Title Put
-// @Description update the Workflow
-// @Param	id		path 	string	true		"The id you want to update"
-// @Param	body		body 	models.Workflow	true		"body for Workflow content"
-// @Success 200 {object} models.Workflow
-// @Failure 403 :id is not int
-// @router /:id [put]
-func (c *WorkflowController) Put() {
-
+// @Title DisparoFlujo
+// @Description funcion para dispars flujo
+func DisparoFlujo(docID string) interface{} {
+	var respuesta interface{}
+	requestBody, errBody := json.Marshal(map[string]string{
+		"entity-type":         "workflow",
+		"workflowModelName":   "SerialDocumentReview",
+		"attachedDocumentIds": "[" + docID + "]",
+	})
+	if errBody != nil {
+		logs.Error("fallo el objeto a enviar: ", errBody)
+	}
+	respuesta = models.PostNuxeo("id", docID, requestBody, "@workflow")
+	if respuesta != nil {
+		return respuesta
+	} else {
+		logs.Error("Error al disparar el flujo")
+	}
+	return nil
 }
 
 // Delete ...
@@ -73,8 +78,35 @@ func (c *WorkflowController) Put() {
 // @Description delete the Workflow
 // @Param	id		path 	string	true		"The id you want to delete"
 // @Success 200 {string} delete success!
-// @Failure 403 id is empty
+// @Failure 404 not found resource
 // @router /:id [delete]
 func (c *WorkflowController) Delete() {
+	var alertErr models.Alert
+	idStr := c.GetString("id")
+	fmt.Println(idStr)
+	DeleteFlujo := EliminarFlujo(idStr)
+	if DeleteFlujo != nil {
+		alertErr.Type = "OK"
+		alertErr.Code = "200"
+		alertErr.Body = DeleteFlujo
+	} else {
+		alertErr.Type = "Failure"
+		alertErr.Code = "404"
+		alertErr.Body = "Error al eliminar el documento el flujo"
+		c.Ctx.Output.SetStatus(404)
+	}
+	c.Data["json"] = alertErr
+	c.ServeJSON()
+}
 
+func EliminarFlujo(flujoID string) interface{} {
+	var respuesta interface{}
+	endpoint := "workflow/" + flujoID
+	respuesta = models.DeleteNuxeo(endpoint)
+	if respuesta != nil {
+		return respuesta
+	} else {
+		logs.Error("Error al obtener el ID del flujo")
+	}
+	return nil
 }
