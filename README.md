@@ -49,9 +49,3 @@ bee run -downdoc=true -gendoc=true
 ### Aprovacion de documentos.
 
 ![aprobacion doc](https://user-images.githubusercontent.com/28914781/65219477-3e737800-da7e-11e9-8192-4600d4c8f7ef.png)
-
-
-
----
-
-falta contemplar la accion a seguir al momento de que no se aprobe el documento para su publicacion.
