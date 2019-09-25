@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"strings"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
@@ -79,37 +80,39 @@ func PostNuxeo(endpoint string, ID string, objeto []byte, opcionendpoint string)
 
 }
 
-func PutNuxeo(endpoint string, ID string, objeto []byte, opcionendpoint string) interface{} {
+func PutNuxeo(endpoint string, objeto string) interface{} {
 	url := "https://" + beego.AppConfig.String("urlNuxeo") + endpoint
-	if &opcionendpoint != nil {
-		url = url + "/" + ID + "/" + opcionendpoint
-	}
-
+	logs.Emergency(url)
 	var client http.Client
-
-	req, err := http.NewRequest("PUT", url, bytes.NewBuffer(objeto))
+	payload := strings.NewReader(objeto)
+	req, err := http.NewRequest("PUT", url, payload)
 	req.Header.Add("Authorization", "Basic "+BasicAuth(beego.AppConfig.String("user"), beego.AppConfig.String("password")))
 	if err != nil {
 		logs.Error("error en post de nuxeo: ", err)
 	}
 	resp, err3 := client.Do(req)
-
 	if err3 != nil {
 		logs.Info("error en client.Do", err3)
 	}
 
 	defer resp.Body.Close()
-	logs.Info(resp.StatusCode)
+	logs.Error(resp.StatusCode)
 	if resp.StatusCode == 200 || resp.StatusCode == 201 { // OK
 		bodyBytes, err2 := ioutil.ReadAll(resp.Body)
 		if err2 != nil {
 			logs.Error("fallo el leer el body de la peticion")
 		}
 		bodyString := string(bodyBytes)
-		logs.Info(bodyString)
 		var data interface{}
 		json.Unmarshal([]byte(bodyString), &data)
 		return data
+	} else {
+		bodyBytes, err2 := ioutil.ReadAll(resp.Body)
+		if err2 != nil {
+			logs.Error("fallo el leer el body de la peticion")
+		}
+		bodyString := string(bodyBytes)
+		logs.Error(bodyString)
 	}
 	return nil
 

@@ -36,9 +36,18 @@ func (c *WorkflowController) Post() {
 
 	DocumentID := c.GetString("docID")
 	fmt.Println(DocumentID)
-	alertErr.Type = "OK"
-	alertErr.Code = "200"
-	alertErr.Body = DisparoFlujo(DocumentID)
+	Disparo := DisparoFlujo(DocumentID)
+
+	if Disparo != nil {
+		alertErr.Type = "OK"
+		alertErr.Code = "200"
+		alertErr.Body = Disparo
+	} else {
+		alertErr.Type = "Failure"
+		alertErr.Code = "404"
+		alertErr.Body = "Error al disparar el flujo"
+	}
+
 	// alertErr.Body = models.GetNuxeo("me")
 	c.Data["json"] = alertErr
 	c.ServeJSON()
@@ -58,7 +67,12 @@ func DisparoFlujo(docID string) interface{} {
 		logs.Error("fallo el objeto a enviar: ", errBody)
 	}
 	respuesta = models.PostNuxeo("id", docID, requestBody, "@workflow")
-	return respuesta
+	if respuesta != nil {
+		return respuesta
+	} else {
+		logs.Error("esta wea va nula")
+	}
+	return nil
 }
 
 // GetAll ...

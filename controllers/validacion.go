@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/logs"
 	"github.com/udistrital/nuxeo_mid/models"
 )
 
@@ -28,18 +29,31 @@ func (c *ValidacionController) Post() {
 	var alertErr models.Alert
 	DocumentID := c.GetString("docID")
 	// fmt.Println(DocumentID)
-	alertErr.Type = "OK"
-	alertErr.Code = "200"
-	alertErr.Body = validar(DocumentID)
-	// alertErr.Body = models.GetNuxeo("me")
+	validacion := validar(DocumentID)
+	if validacion != nil {
+		alertErr.Type = "OK"
+		alertErr.Code = "200"
+		alertErr.Body = validacion
+	} else {
+		alertErr.Type = "Failure"
+		alertErr.Code = "404"
+		alertErr.Body = "Error al validar el documento el flujo"
+	}
 	c.Data["json"] = alertErr
 	c.ServeJSON()
 }
 
-func validar(docID string) string {
+func validar(docID string) interface{} {
 	flujoID := ObtenerFlujoID(docID)
-	tareaID := ObtenerTareaID(docID, flujoID, beego.AppConfig.String("user"), "SerialDocumentReview")
-	return tareaID
+	if flujoID != "nil" {
+		tareaID := ObtenerTareaID(docID, flujoID, beego.AppConfig.String("user"), "SerialDocumentReview")
+		if tareaID != "nil" {
+			review := IniciarReview(tareaID)
+			return review
+		}
+
+	}
+	return nil
 }
 
 func ObtenerFlujoID(docID string) string {
@@ -47,18 +61,14 @@ func ObtenerFlujoID(docID string) string {
 	var StringRespueta string
 	endpoint := "id/" + docID + "/@workflow"
 	respuesta = models.GetNuxeo(endpoint)
-	// result := respuesta["Body"]
-	// logs.Error(respuesta)
-	// logs.Error(reflect.ValueOf(respuesta))
-	respuesta = models.GetElemento(respuesta, "entries")
-	StringRespueta = models.GetElementoMaptoString(respuesta, "id")
-
-	// value2 := reflect.ValueOf(c["attachedDocumentIds"])
-	// d := value2.Index(0).Interface().(map[string]interface{})
-	// logs.Info(d["id"])
-
-	return StringRespueta
-	// return c["attachedDocumentIds"]
+	if respuesta != nil {
+		respuesta = models.GetElemento(respuesta, "entries")
+		StringRespueta = models.GetElementoMaptoString(respuesta, "id")
+		return StringRespueta
+	} else {
+		logs.Error("Error al obtener el ID del flujo")
+	}
+	return "nil"
 }
 
 func ObtenerTareaID(docID string, flujoID string, userID string, nameFlujo string) string {
@@ -66,29 +76,29 @@ func ObtenerTareaID(docID string, flujoID string, userID string, nameFlujo strin
 	var StringRespueta string
 	endpoint := "id/" + docID + "/@task?userId=" + userID + "&workflowInstanceId=" + flujoID + "&workflowModelName=" + nameFlujo
 	respuesta = models.GetNuxeo(endpoint)
-	respuesta = models.GetElemento(respuesta, "entries")
-	StringRespueta = models.GetElementoMaptoString(respuesta, "id")
-
-	return StringRespueta
+	if respuesta != nil {
+		respuesta = models.GetElemento(respuesta, "entries")
+		StringRespueta = models.GetElementoMaptoString(respuesta, "id")
+		return StringRespueta
+	} else {
+		logs.Error("Error al obtener el ID de la tarea")
+	}
+	return "nil"
 }
 
-func IniciarReview(docID string) string {
+func IniciarReview(tareaID string) interface{} {
 	var respuesta interface{}
-	var StringRespueta string
-	endpoint := "id/" + docID + "/@workflow"
-	respuesta = models.GetNuxeo(endpoint)
-	// result := respuesta["Body"]
-	// logs.Error(respuesta)
-	// logs.Error(reflect.ValueOf(respuesta))
-	respuesta = models.GetElemento(respuesta, "entries")
-	StringRespueta = models.GetElementoMaptoString(respuesta, "id")
+	endpoint := "task/" + tareaID + "/start_review"
+	requestBody := "{\"entity-type\":\"task\",\n\"id\":\"" + tareaID +
+		"\",\n\"variables\":\n{\"comment\":\"Se validan los documentos.\",\n\"participants\":[\"user:" +
+		beego.AppConfig.String("user") + "\"],\n\"validationOrReview\":\"validation\"}\n}"
+	logs.Warn(string(requestBody))
+	respuesta = models.PutNuxeo(endpoint, requestBody)
 
-	// value2 := reflect.ValueOf(c["attachedDocumentIds"])
-	// d := value2.Index(0).Interface().(map[string]interface{})
-	// logs.Info(d["id"])
-
-	return StringRespueta
-	// return c["attachedDocumentIds"]
+	// }
+	respuesta = models.GetElemento(respuesta, "id")
+	// StringRespueta = models.GetElementoMaptoString(respuesta, "id")
+	return respuesta
 }
 
 // GetAll ...
