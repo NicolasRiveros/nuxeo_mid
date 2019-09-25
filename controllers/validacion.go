@@ -23,7 +23,7 @@ func (c *ValidacionController) URLMapping() {
 // @Description create Validacion
 // @Param	docID	query	string	true		"ID del documento"
 // @Success 200 {}
-// @Failure 403 body is empty
+// @Failure 404 not found resource
 // @router / [post]
 func (c *ValidacionController) Post() {
 	var alertErr models.Alert
@@ -38,6 +38,7 @@ func (c *ValidacionController) Post() {
 		alertErr.Type = "Failure"
 		alertErr.Code = "404"
 		alertErr.Body = "Error al validar el documento el flujo"
+		c.Ctx.Output.SetStatus(404)
 	}
 	c.Data["json"] = alertErr
 	c.ServeJSON()
@@ -55,7 +56,10 @@ func validar(docID string) interface{} {
 				if tareaID != "nil" {
 					ResValidacion := RealizarValidacion(tareaID2)
 					if ResValidacion != nil {
-						return ResValidacion
+						comprobar := Comprobante(docID)
+						if comprobar != nil {
+							return comprobar
+						}
 					}
 				}
 
@@ -102,7 +106,6 @@ func IniciarReview(tareaID string) interface{} {
 	requestBody := "{\"entity-type\":\"task\",\n\"id\":\"" + tareaID +
 		"\",\n\"variables\":\n{\"comment\":\"Se validan los documentos.\",\n\"participants\":[\"user:" +
 		beego.AppConfig.String("user") + "\"],\n\"validationOrReview\":\"validation\"}\n}"
-	logs.Warn(string(requestBody))
 	respuesta = models.PutNuxeo(endpoint, requestBody)
 	if respuesta != nil {
 		respuesta = models.GetElemento(respuesta, "id")
@@ -122,10 +125,24 @@ func RealizarValidacion(tareaID string) interface{} {
 	logs.Warn(string(requestBody))
 	respuesta = models.PutNuxeo(endpoint, requestBody)
 	if respuesta != nil {
-		respuesta = models.GetElemento(respuesta, "id")
 		return respuesta
 	} else {
 		logs.Error("Error al validar el documento")
+	}
+	return nil
+}
+
+func Comprobante(docID string) interface{} {
+	var respuesta interface{}
+	var StringRespueta string
+	endpoint := "id/" + docID
+	respuesta = models.GetNuxeo(endpoint)
+	if respuesta != nil {
+		// respuesta = models.GetElemento(respuesta, "entries")
+		// StringRespueta = models.GetElementoMaptoString(respuesta, "id")
+		return StringRespueta
+	} else {
+		logs.Error("Error al obtener el ID del flujo")
 	}
 	return nil
 }

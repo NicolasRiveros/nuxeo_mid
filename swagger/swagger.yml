@@ -64,8 +64,8 @@ paths:
       responses:
         "200":
           description: '{}'
-        "403":
-          description: body is empty
+        "404":
+          description: not found resource
   /validacion/{id}:
     put:
       tags:
@@ -144,8 +144,6 @@ paths:
       responses:
         "200":
           description: '{}'
-        "403":
-          description: body is empty
   /workflow/{id}:
     put:
       tags:

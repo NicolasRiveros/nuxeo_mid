@@ -71,7 +71,6 @@ func PostNuxeo(endpoint string, ID string, objeto []byte, opcionendpoint string)
 			logs.Error("fallo el leer el body de la peticion")
 		}
 		bodyString := string(bodyBytes)
-		logs.Info(bodyString)
 		var data interface{}
 		json.Unmarshal([]byte(bodyString), &data)
 		return data

@@ -27,7 +27,7 @@ func (c *WorkflowController) URLMapping() {
 // @Description create Workflow
 // @Param	docID	query	string	true		"ID del documento"
 // @Success 200 {}
-// @Failure 403 body is empty
+// // @Failure 404 not found resource
 // @router / [post]
 func (c *WorkflowController) Post() {
 	var alertErr models.Alert
@@ -46,10 +46,14 @@ func (c *WorkflowController) Post() {
 		alertErr.Type = "Failure"
 		alertErr.Code = "404"
 		alertErr.Body = "Error al disparar el flujo"
+		c.Ctx.Output.SetStatus(404)
+		// c.Data["json"] = alertErr
+		// c.ServeJSON()
 	}
 
 	// alertErr.Body = models.GetNuxeo("me")
 	c.Data["json"] = alertErr
+
 	c.ServeJSON()
 }
 
