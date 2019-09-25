@@ -50,7 +50,15 @@ func validar(docID string) interface{} {
 		if tareaID != "nil" {
 			review := IniciarReview(tareaID)
 			if review != "nil" {
-				return review
+				// return review
+				tareaID2 := ObtenerTareaID(docID, flujoID, beego.AppConfig.String("user"), "SerialDocumentReview")
+				if tareaID != "nil" {
+					ResValidacion := RealizarValidacion(tareaID2)
+					if ResValidacion != nil {
+						return ResValidacion
+					}
+				}
+
 			}
 		}
 
@@ -101,6 +109,23 @@ func IniciarReview(tareaID string) interface{} {
 		return respuesta
 	} else {
 		logs.Error("Error el review de la tarea")
+	}
+	return nil
+}
+
+func RealizarValidacion(tareaID string) interface{} {
+	var respuesta interface{}
+	endpoint := "task/" + tareaID + "/validate"
+	requestBody := "{\"entity-type\":\"task\",\n\"id\":\"" + tareaID +
+		"\",\n\"variables\":\n{\"comment\":\"El supervisor aprueba los documentos.\",\n\"participants\":[\"user:" +
+		beego.AppConfig.String("user") + "\"],\n\"initiatorComment\":\"Se validan los documentos.\"}\n}"
+	logs.Warn(string(requestBody))
+	respuesta = models.PutNuxeo(endpoint, requestBody)
+	if respuesta != nil {
+		respuesta = models.GetElemento(respuesta, "id")
+		return respuesta
+	} else {
+		logs.Error("Error al validar el documento")
 	}
 	return nil
 }
