@@ -81,7 +81,6 @@ func PostNuxeo(endpoint string, ID string, objeto []byte, opcionendpoint string)
 
 func PutNuxeo(endpoint string, objeto string) interface{} {
 	url := "https://" + beego.AppConfig.String("urlNuxeo") + endpoint
-	logs.Emergency(url)
 	var client http.Client
 	payload := strings.NewReader(objeto)
 	req, err := http.NewRequest("PUT", url, payload)

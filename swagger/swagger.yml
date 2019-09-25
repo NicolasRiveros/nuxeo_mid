@@ -12,44 +12,6 @@ info:
 basePath: /v1
 paths:
   /validacion/:
-    get:
-      tags:
-      - validacion
-      description: get Validacion
-      operationId: ValidacionController.GetAll
-      parameters:
-      - in: query
-        name: query
-        description: Filter. e.g. col1:v1,col2:v2 ...
-        type: string
-      - in: query
-        name: fields
-        description: Fields returned. e.g. col1,col2 ...
-        type: string
-      - in: query
-        name: sortby
-        description: Sorted-by fields. e.g. col1,col2 ...
-        type: string
-      - in: query
-        name: order
-        description: Order corresponding to each sortby field, if single value, apply
-          to all sortby fields. e.g. desc,asc ...
-        type: string
-      - in: query
-        name: limit
-        description: Limit the size of result set. Must be an integer
-        type: string
-      - in: query
-        name: offset
-        description: Start position of result set. Must be an integer
-        type: string
-      responses:
-        "200":
-          description: ""
-          schema:
-            $ref: '#/definitions/models.Validacion'
-        "403":
-          description: ""
     post:
       tags:
       - validacion
@@ -66,70 +28,7 @@ paths:
           description: '{}'
         "404":
           description: not found resource
-  /validacion/{id}:
-    put:
-      tags:
-      - validacion
-      description: update the Validacion
-      operationId: ValidacionController.Put
-      parameters:
-      - in: path
-        name: id
-        description: The id you want to update
-        required: true
-        type: string
-      - in: body
-        name: body
-        description: body for Validacion content
-        required: true
-        schema:
-          $ref: '#/definitions/models.Validacion'
-      responses:
-        "200":
-          description: ""
-          schema:
-            $ref: '#/definitions/models.Validacion'
-        "403":
-          description: :id is not int
   /workflow/:
-    get:
-      tags:
-      - workflow
-      description: get Workflow
-      operationId: WorkflowController.GetAll
-      parameters:
-      - in: query
-        name: query
-        description: Filter. e.g. col1:v1,col2:v2 ...
-        type: string
-      - in: query
-        name: fields
-        description: Fields returned. e.g. col1,col2 ...
-        type: string
-      - in: query
-        name: sortby
-        description: Sorted-by fields. e.g. col1,col2 ...
-        type: string
-      - in: query
-        name: order
-        description: Order corresponding to each sortby field, if single value, apply
-          to all sortby fields. e.g. desc,asc ...
-        type: string
-      - in: query
-        name: limit
-        description: Limit the size of result set. Must be an integer
-        type: string
-      - in: query
-        name: offset
-        description: Start position of result set. Must be an integer
-        type: string
-      responses:
-        "200":
-          description: ""
-          schema:
-            $ref: '#/definitions/models.Workflow'
-        "403":
-          description: ""
     post:
       tags:
       - workflow
@@ -144,38 +43,25 @@ paths:
       responses:
         "200":
           description: '{}'
+        "404":
+          description: not found resource
   /workflow/{id}:
-    put:
+    delete:
       tags:
       - workflow
-      description: update the Workflow
-      operationId: WorkflowController.Put
+      description: delete the Workflow
+      operationId: WorkflowController.Delete
       parameters:
       - in: path
         name: id
-        description: The id you want to update
+        description: The id you want to delete
         required: true
         type: string
-      - in: body
-        name: body
-        description: body for Workflow content
-        required: true
-        schema:
-          $ref: '#/definitions/models.Workflow'
       responses:
         "200":
-          description: ""
-          schema:
-            $ref: '#/definitions/models.Workflow'
-        "403":
-          description: :id is not int
-definitions:
-  models.Validacion:
-    title: Validacion
-    type: object
-  models.Workflow:
-    title: Workflow
-    type: object
+          description: '{string} delete success!'
+        "404":
+          description: not found resource
 tags:
 - name: validacion
   description: |
