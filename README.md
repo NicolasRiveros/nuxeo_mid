@@ -2,11 +2,11 @@
 
 Api intermediaria del cliente y el api de nuxeo.
 
-Esta api tiene inicialmente la finalidad de disparar el flujo a los documentos de nuxeo, el cual luego podra ser finalizado si se rechaza o ser consitnuar el flujo y permitir que los documentos queden publicos.
+Esta api tiene inicialmente la finalidad de disparar el flujo a los documentos de nuxeo, el cual luego podra ser finalizado si se rechaza o ser continua el flujo y permitir que los documentos queden publicos.
 
-Inicialmente es un requerimiento para el cliente de `CUMPLIDOS` , peri se espera que se pueda usar de forma generica.
+Inicialmente es un requerimiento para el cliente de `CUMPLIDOS` , pero se espera que se pueda usar de forma generica.
 
-Los siguientes diagramas de secuencia evidencian el proceso de disparo de flujo y de aprovacion.
+Los siguientes diagramas de secuencia evidencian el proceso de disparo de flujo y de aprobacion.
 
 
 # Instalación
