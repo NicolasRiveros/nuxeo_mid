@@ -131,7 +131,7 @@ func DeleteNuxeo(endpoint string) interface{} {
 
 	defer resp.Body.Close()
 
-	if resp.StatusCode == 200 { // OK
+	if resp.StatusCode == 204 { // OK
 		bodyBytes, err2 := ioutil.ReadAll(resp.Body)
 		if err2 != nil {
 			logs.Error("fallo el leer el body de la peticion")
