@@ -77,15 +77,15 @@ func DisparoFlujo(docID string) interface{} {
 // @Title Delete
 // @Description delete the Workflow
 // @Param	id		path 	string	true		"The id you want to delete"
-// @Success 200 {string} delete success!
+// @Success 200 {}
 // @Failure 404 not found resource
 // @router /:id [delete]
 func (c *WorkflowController) Delete() {
 	var alertErr models.Alert
-	idStr := c.GetString("id")
+	idStr := c.GetString(":id")
 	fmt.Println(idStr)
 	DeleteFlujo := EliminarFlujo(idStr)
-	if DeleteFlujo != nil {
+	if DeleteFlujo != "FAILURE" {
 		alertErr.Type = "OK"
 		alertErr.Code = "200"
 		alertErr.Body = DeleteFlujo
@@ -93,20 +93,32 @@ func (c *WorkflowController) Delete() {
 		alertErr.Type = "Failure"
 		alertErr.Code = "404"
 		alertErr.Body = "Error al eliminar el documento el flujo"
+		c.Data["json"] = alertErr
 		c.Ctx.Output.SetStatus(404)
 	}
 	c.Data["json"] = alertErr
+	fmt.Println(c.Data["json"])
 	c.ServeJSON()
 }
 
-func EliminarFlujo(flujoID string) interface{} {
+func EliminarFlujo(DocID string) string {
 	var respuesta interface{}
-	endpoint := "workflow/" + flujoID
-	respuesta = models.DeleteNuxeo(endpoint)
-	if respuesta != nil {
-		return respuesta
+	
+	flujoID := models.GetFlujoID(DocID)
+	if (flujoID != "NoID"){
+		endpoint := "workflow/" + flujoID
+		respuesta = models.DeleteNuxeo(endpoint)
+		if respuesta != nil {
+			logs.Error("Error al eliminar el flujo")
+			return "FAILURE"
+		} else {
+			return "SUCCESS"
+		}
 	} else {
-		logs.Error("Error al obtener el ID del flujo")
+		logs.Error("no hay flujo vonculado a documento")
+		return "FAILURE"
 	}
-	return nil
+	
+	
+	return ""
 }
