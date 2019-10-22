@@ -53,10 +53,8 @@ func validar(docID string) interface{} {
 				if tareaID != "nil" {
 					ResValidacion := RealizarValidacion(tareaID2)
 					if ResValidacion != nil {
-						comprobar := Comprobante(docID)
-						if comprobar != nil {
-							return comprobar
-						}
+						// logs.Info(ResValidacion)
+						return ResValidacion
 					}
 				}
 
