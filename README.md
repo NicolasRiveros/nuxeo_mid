@@ -60,7 +60,7 @@ PORT_NUXEO_MID=8080 USER_NUXEO=XXX PASSWORD_NUXEO=XXX bee run
 
 | Develop | Relese 0.0.1 | Master |
 | -- | -- | -- |
-| 1 | 2 | 3 |
+| [![Build Status](https://hubci.portaloas.udistrital.edu.co/api/badges/udistrital/nuxeo_mid/status.svg?ref=refs/heads/develop)](https://hubci.portaloas.udistrital.edu.co/udistrital/nuxeo_mid) | [![Build Status](https://hubci.portaloas.udistrital.edu.co/api/badges/udistrital/nuxeo_mid/status.svg?ref=refs/heads/release/0.0.1)](https://hubci.portaloas.udistrital.edu.co/udistrital/nuxeo_mid) | [![Build Status](https://hubci.portaloas.udistrital.edu.co/api/badges/udistrital/nuxeo_mid/status.svg)](https://hubci.portaloas.udistrital.edu.co/udistrital/nuxeo_mid) |
 
 
 ## Licencia
