@@ -85,7 +85,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "{string} delete success!"
+                        "description": "{}"
                     },
                     "404": {
                         "description": "not found resource"
